@@ -1,18 +1,45 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
-const Header = () => {
+const Header = ({ setSearch }) => {
+
+    const [resizes, setResizes] = new useState(window.innerWidth);
+
+    useEffect(() => {
+        window.addEventListener('resize', screenSize());
+        return () => window.removeEventListener('resize', screenSize());
+    }, [])
+
+    useEffect(() => { screenSize() }, [resizes]);
+
+    const screenSize = () => {
+        setResizes(window.innerWidth);
+    };
+
+    const busqueda = useRef();
+
+    const submits = (e) => {
+        e.preventDefault();
+        setSearch(busqueda.current.value);
+    }
+
     return (
         <header className="content-header display-center">
-            <h1 className='image-header-title display-center'>
-                <img src="./Images/gif.png"
-                    alt="Icon gif"
-                    title='Icon-gif'
-                    id='img-header' />
-            </h1>
-            <form action="" id="form-header">
-                <label className="search-title" htmlFor='input-header'>Busca un gif</label>
-                <input type="text" id="input-header" placeholder='Escribe aquí' />
-                <button type='submit' id="search-header">Buscar</button>
+            {
+                resizes >= 500 && <h1 className='image-header-title display-center'>{resizes > 1100 ? 'GIFFINDER' : 'GIF'}</h1>
+            }
+            <form action="#"
+                id="form-header"
+                className='display-center'
+                onSubmit={e => submits(e)}>
+                <div className="search-input display-center">
+                    <div className='magnifying-glass display-center'>
+                        <img src="./Images/magnifying-glass.png" alt="Magnifying glass" id='glass-input' />
+                    </div>
+                    <input type="text" id="input-header" placeholder={resizes < 551 ? `GIFFIND - Search` : 'Search'} ref={busqueda} />
+                </div>
+                <div className="content-button display-center">
+                    <button type='submit' id="search-header">Search</button>
+                </div>
             </form>
         </header>
     )
